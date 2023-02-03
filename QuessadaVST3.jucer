@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="NT9jHW" name="QuessadaVST3" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              jucerFormatVersion="1" companyName="Quessada_Audio_Inc">
   <MAINGROUP id="iS8Uu5" name="QuessadaVST3">
     <GROUP id="{0D14A1D5-7E16-DF01-2A96-2625902D8BAC}" name="Source">
       <FILE id="Sbje3L" name="PluginProcessor.cpp" compile="1" resource="0"
