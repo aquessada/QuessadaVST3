@@ -95,6 +95,12 @@ void QuessadaVST3AudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    //Fifo.prepare(samplesPerBlock);
+    {
+        // Prepare the buffer and fifo for the given sample rate and block size
+        buffer.setSize(getTotalNumInputChannels(), samplesPerBlock, false);
+        fifo.prepare(samplesPerBlock, getTotalNumInputChannels());
+    }
 }
 
 void QuessadaVST3AudioProcessor::releaseResources()
@@ -144,18 +150,8 @@ void QuessadaVST3AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
+    fifo.push(buffer);
+    fifo.update(buffer);
 }
 
 //==============================================================================

@@ -4,6 +4,7 @@
               jucerFormatVersion="1" companyName="Quessada_Audio_Inc">
   <MAINGROUP id="iS8Uu5" name="QuessadaVST3">
     <GROUP id="{0D14A1D5-7E16-DF01-2A96-2625902D8BAC}" name="Source">
+      <FILE id="NwwkTt" name="Fifo.h" compile="0" resource="0" file="Source/Fifo.h"/>
       <FILE id="Sbje3L" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="x1ttJi" name="PluginProcessor.h" compile="0" resource="0"
@@ -12,6 +13,8 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="Frrn8J" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="eHgr6G" name="Meter.cpp" compile="1" resource="0" file="Source/Meter.cpp"/>
+    <FILE id="ssGQEq" name="Meter.h" compile="0" resource="0" file="Source/Meter.h"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>

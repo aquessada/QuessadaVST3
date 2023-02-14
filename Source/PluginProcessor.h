@@ -9,10 +9,21 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Fifo.h"
+
 
 //==============================================================================
+
+
 /**
+    Chuck, As I dont know programming, I just copied it from another part of your videos, but there are things i still dont know what to do with...
+
+    ofc got some help from chatgpt jsut to stop bothering you
+
+
 */
+
+
 class QuessadaVST3AudioProcessor  : public juce::AudioProcessor
                             #if JucePlugin_Enable_ARA
                              , public juce::AudioProcessorARAExtension
@@ -23,7 +34,7 @@ public:
     QuessadaVST3AudioProcessor();
     ~QuessadaVST3AudioProcessor() override;
 
-    //==============================================================================
+       //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
@@ -57,6 +68,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+
+    Fifo<juce::AudioBuffer<float>> fifo;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QuessadaVST3AudioProcessor)
 };
