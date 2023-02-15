@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Utilities.h"
 
 struct Meter : juce::Component
 {
@@ -18,8 +19,6 @@ struct Meter : juce::Component
     void paint(juce::Graphics& g) override;
     void update(float dbLevel);
 
-private:
-    static constexpr float NEGATIVE_INFINITY = -72.0f;
-    static constexpr float MAX_DECIBELS = 12.0f;
+public:
     float peakDb{ NEGATIVE_INFINITY };
 };

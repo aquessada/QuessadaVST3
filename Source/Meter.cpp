@@ -10,9 +10,7 @@
 
 #include "Meter.h"
 #include <JuceHeader.h>
-
-#define MAX_DECIBELS 12.0f
-#define NEGATIVE_INFINITY -72.0f
+#include "Utilities.h"
 
 Meter::Meter()
 {
@@ -33,6 +31,6 @@ void Meter::paint(juce::Graphics& g)
 
 void Meter::update(float dbLevel)
 {
-    peakDb = dbLevel > peakDb ? dbLevel : peakDb * 0.99f; // update peakDb with a smoothing factor
+    peakDb = dbLevel; //commented out the smoothing > peakDb ? dbLevel : peakDb * 0.99f; // update peakDb with a smoothing factor
     repaint(); // request a repaint
 }

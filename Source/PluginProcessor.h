@@ -67,9 +67,15 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-private:
+public:
 
     Fifo<juce::AudioBuffer<float>> fifo;
+    juce::AudioBuffer<float> buffer;
+ 
+
+
+
+
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QuessadaVST3AudioProcessor)

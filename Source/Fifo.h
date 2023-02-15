@@ -1,31 +1,34 @@
-/*
-  ==============================================================================
-
-    Fifo.h
-    Created: 14 Feb 2023 6:53:44pm
-    Author:  Quessada
-
-  ==============================================================================
-*/
-
 #pragma once
-
-//Chuck i just copied over the SImpleMB, i dont know how to write this and understand how it works) asked somethings to chatGPT and modified as it said, but ni dont relaly nknow what everything is for...
 
 #include <JuceHeader.h>
 
 
-template<typename T, size_t Size>
+template<typename T>
 struct Fifo
 {
-    size_t getSize() const noexcept { return Size; }
-
-    void prepare(int numSamples, int numChannels)
+    void prepare(int numChannels, int numSamples)
     {
-        for (auto& buf : buffer)
+        static_assert(std::is_same_v<T, juce::AudioBuffer<float>>,
+            "prepare(numChannels, numSamples) should only be used when the Fifo is holding juce::AudioBuffer<float>");
+        for (auto& buffer : buffers)
         {
-            buf.resize(numChannels, numSamples, true, false);
-            buf.clear();
+            buffer.setSize(numChannels,
+                numSamples,
+                false,   //clear everything?
+                true,    //including the extra space?
+                true);   //avoid reallocating if you can?
+            buffer.clear();
+        }
+    }
+
+    void prepare(size_t numElements)
+    {
+        static_assert(std::is_same_v<T, std::vector<float>>,
+            "prepare(numElements) should only be used when the Fifo is holding std::vector<float>");
+        for (auto& buffer : buffers)
+        {
+            buffer.clear();
+            buffer.resize(numElements, 0);
         }
     }
 
@@ -34,7 +37,7 @@ struct Fifo
         auto write = fifo.write(1);
         if (write.blockSize1 > 0)
         {
-            buffer[write.startIndex1] = t;
+            buffers[write.startIndex1] = t;
             return true;
         }
 
@@ -46,7 +49,7 @@ struct Fifo
         auto read = fifo.read(1);
         if (read.blockSize1 > 0)
         {
-            t = buffer[read.startIndex1];
+            t = buffers[read.startIndex1];
             return true;
         }
 
@@ -57,13 +60,62 @@ struct Fifo
     {
         return fifo.getNumReady();
     }
-
-    int getAvailableSpace() const
-    {
-        return fifo.getFreeSpace();
-    }
-
 private:
+    static constexpr int Size = 30;
+    std::array<T, Size> buffers;
     juce::AbstractFifo fifo{ Size };
-    std::array<T, Size> buffer;
+   
 };
+
+//template<typename T, size_t Size>
+//struct Fifo
+//{
+//    size_t getSize() const noexcept { return Size; }
+//
+//    void prepare(int numSamples, int numChannels)
+//    {
+//        for (auto& buf : buffer)
+//        {
+//            buf.setSize(numChannels, numSamples, true, false);
+//            buf.clear();
+//        }
+//    }
+//
+//    bool push(const T& t)
+//    {
+//        auto write = fifo.write(1);
+//        if (write.blockSize1 > 0)
+//        {
+//            buffer[write.startIndex1].copyFrom(0, 0, t);
+//            return true;
+//        }
+//
+//        return false;
+//    }
+//
+//    bool pull(T& t)
+//    {
+//        auto read = fifo.read(1);
+//        if (read.blockSize1 > 0)
+//        {
+//            t = buffer[read.startIndex1];
+//            return true;
+//        }
+//
+//        return false;
+//    }
+//
+//    int getNumAvailableForReading() const
+//    {
+//        return fifo.getNumReady();
+//    }
+//
+//    int getAvailableSpace() const
+//    {
+//        return fifo.getFreeSpace();
+//    }
+//
+//private:
+//    juce::AbstractFifo fifo{ Size };
+//    juce::AudioBuffer<T> buffer[Size];
+//};
