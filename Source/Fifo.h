@@ -1,46 +1,36 @@
 #pragma once
 
-#include <JuceHeader.h>
 
+#pragma once
 
-template<typename T>
+#include <array>
+#include "../JuceLibraryCode/JuceHeader.h"
+
+template<typename T> //, size_t Size>
 struct Fifo
 {
-    void prepare(int numChannels, int numSamples)
+    size_t getSize() const noexcept
     {
-        static_assert(std::is_same_v<T, juce::AudioBuffer<float>>,
-            "prepare(numChannels, numSamples) should only be used when the Fifo is holding juce::AudioBuffer<float>");
-        for (auto& buffer : buffers)
-        {
-            buffer.setSize(numChannels,
-                numSamples,
-                false,   //clear everything?
-                true,    //including the extra space?
-                true);   //avoid reallocating if you can?
-            buffer.clear();
-        }
+        return Size;
     }
 
-    void prepare(size_t numElements)
+    void prepare(int numSamples, int numChannels)
     {
-        static_assert(std::is_same_v<T, std::vector<float>>,
-            "prepare(numElements) should only be used when the Fifo is holding std::vector<float>");
         for (auto& buffer : buffers)
         {
+            buffer.setSize(numChannels, numSamples, false, true, true);
             buffer.clear();
-            buffer.resize(numElements, 0);
         }
     }
 
     bool push(const T& t)
     {
-        auto write = fifo.write(1);
+        auto scopedWriter = fifo.write(1);
         if (write.blockSize1 > 0)
         {
             buffers[write.startIndex1] = t;
             return true;
         }
-
         return false;
     }
 
@@ -52,7 +42,6 @@ struct Fifo
             t = buffers[read.startIndex1];
             return true;
         }
-
         return false;
     }
 
@@ -60,62 +49,66 @@ struct Fifo
     {
         return fifo.getNumReady();
     }
+
+    int getAvailableSpace() const
+    {
+        return fifo.getFreeSpace();
+    }
+
 private:
-    static constexpr int Size = 30;
-    std::array<T, Size> buffers;
-    juce::AbstractFifo fifo{ Size };
    
+    static constexpr int Capacity = 20;
+    std::array<T, Capacity> buffers;
+    juce::AbstractFifo fifo{ Capacity };
 };
 
-//template<typename T, size_t Size>
+
+//template<typename T>
 //struct Fifo
 //{
-//    size_t getSize() const noexcept { return Size; }
 //
-//    void prepare(int numSamples, int numChannels)
+//    void prepare(int numberOfChannels, int numberOfSamples)
 //    {
-//        for (auto& buf : buffer)
+//
+//        for (auto& buffer : buffers)
 //        {
-//            buf.setSize(numChannels, numSamples, true, false);
-//            buf.clear();
+//            buffer.setSize(numberOfChannels, numberOfSamples);
 //        }
+//
 //    }
 //
-//    bool push(const T& t)
+//    bool push(const T& itemToAdd)
 //    {
-//        auto write = fifo.write(1);
-//        if (write.blockSize1 > 0)
+//        auto scopedWriter = fifo.write(1);
+//
+//        if (scopedWriter.blockSize1 >= 1)
 //        {
-//            buffer[write.startIndex1].copyFrom(0, 0, t);
+//            auto& buffer = buffers[scopedWriter.startIndex1];
+//            buffer = itemToAdd;
 //            return true;
 //        }
 //
 //        return false;
 //    }
 //
-//    bool pull(T& t)
+//    bool pull(T& itemToPull)
 //    {
-//        auto read = fifo.read(1);
-//        if (read.blockSize1 > 0)
+//        auto scopedReader = fifo.read(1);
+//
+//        if (scopedReader.blockSize1 >= 1)
 //        {
-//            t = buffer[read.startIndex1];
+//            auto& buffer = buffers[scopedReader.startIndex1];
+//            itemToPull = buffer;
 //            return true;
 //        }
 //
 //        return false;
-//    }
-//
-//    int getNumAvailableForReading() const
-//    {
-//        return fifo.getNumReady();
-//    }
-//
-//    int getAvailableSpace() const
-//    {
-//        return fifo.getFreeSpace();
 //    }
 //
 //private:
-//    juce::AbstractFifo fifo{ Size };
-//    juce::AudioBuffer<T> buffer[Size];
+//
+//    static constexpr int Size = 5;
+//    std::array<T, Size> buffers;
+//    AbstractFifo fifo{ Size };
+//
 //};

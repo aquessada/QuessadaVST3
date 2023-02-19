@@ -8,9 +8,8 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "Meter.h"
-#include "Utilities.h"
-#include "Fifo.h"
+
+
 
 
 //==============================================================================
@@ -28,7 +27,7 @@ QuessadaVST3AudioProcessorEditor::QuessadaVST3AudioProcessorEditor(QuessadaVST3A
     addAndMakeVisible(meter); 
 
         // Initialize buffer
-    buffer.setSize(audioProcessor.getTotalNumInputChannels(), audioProcessor.getBlockSize(), false);
+    inBuffer.setSize(audioProcessor.getTotalNumInputChannels(), audioProcessor.getBlockSize(), false);
 
 
     //set timer construct for the rms level meters
@@ -70,13 +69,14 @@ void QuessadaVST3AudioProcessorEditor::resized()
 void QuessadaVST3AudioProcessorEditor::timerCallback()
 {
     // Check if the fifo has items available for reading
-    if (fifo.getNumAvailableForReading() > 0)
+    if (audioProcessor.fifo.getNumAvailableForReading() > 0)
     {
         // Pull every element available out of the fifo
-        while (fifo.pull(buffer))
+        if (audioProcessor.fifo.getNumAvailableForReading() > 0)
+            while (audioProcessor.fifo.pull(inBuffer))
         {
             // Get the magnitude of the left channel
-            float leftMagnitude = buffer.getMagnitude(0, 0, buffer.getNumSamples());
+            float leftMagnitude = inBuffer.getMagnitude(0, 0, inBuffer.getNumSamples());
 
             // Convert the magnitude to decibels
             float leftDb = juce::Decibels::gainToDecibels(leftMagnitude, NEGATIVE_INFINITY);
@@ -86,7 +86,6 @@ void QuessadaVST3AudioProcessorEditor::timerCallback()
         }
     }
 }
-
 
 
 

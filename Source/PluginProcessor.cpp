@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+
 //==============================================================================
 QuessadaVST3AudioProcessor::QuessadaVST3AudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -98,7 +100,6 @@ void QuessadaVST3AudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     //Fifo.prepare(samplesPerBlock);
     {
         // Prepare the buffer and fifo for the given sample rate and block size
-        buffer.setSize(getTotalNumInputChannels(), samplesPerBlock, false);
         fifo.prepare(getTotalNumInputChannels(), samplesPerBlock);
 
     }
@@ -149,10 +150,8 @@ void QuessadaVST3AudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        this->buffer.clear (i, 0, buffer.getNumSamples());
+        buffer.clear (i, 0, buffer.getNumSamples());
 
-    fifo.push(buffer);
-    
 }
 
 //==============================================================================

@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Fifo.h"
+#include <array>
 
 
 //==============================================================================
@@ -67,10 +68,13 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-public:
+    //Public knstance of Fifo!!
+   //Fifo<float, 480> fifo;
+   Fifo<juce::AudioBuffer<float>> fifo;
 
-    Fifo<juce::AudioBuffer<float>> fifo;
-    juce::AudioBuffer<float> buffer;
+ 
+private:
+
  
 
 

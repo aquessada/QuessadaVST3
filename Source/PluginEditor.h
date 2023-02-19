@@ -35,8 +35,14 @@ private:
     // access the processor object that created it.
 
     QuessadaVST3AudioProcessor& audioProcessor;
+    
     Meter meter;
-    juce::AudioBuffer<float> buffer; // Declare an AudioBuffer to hold the data pulled from the FIFO
-    Fifo<juce::AudioBuffer<float>> fifo;
+
+    juce::AudioBuffer<float> inBuffer;
+    
+    //static constexpr int Size = 5;
+    //Fifo<float, Size> fifo;
+    //juce::AudioBuffer<float> buffer;
+
      JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QuessadaVST3AudioProcessorEditor)
 };
